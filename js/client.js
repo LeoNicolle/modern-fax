@@ -1,8 +1,11 @@
 const io = require('socket.io-client');
 
-const socket = io('http://localhost:5000');
+const url = "http://"+(process.argv[3]
+    ? process.argv[3]: "51.75.28.38")+ ":5000";
 
-console.log("process.argv[1]",process.argv[2]);
+const socket = io(url);
+
+console.log("username: ",process.argv[2], " url: ", url);
 
 socket.on('message', (data) => {
   console.log("message received", data);

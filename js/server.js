@@ -1,6 +1,5 @@
-const Server = require('socket.io');
 const fs = require("fs");
-const io = new Server();
+const io = require('socket.io')();
 const users = [
 ];
 const allMessages = [];

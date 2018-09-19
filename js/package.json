@@ -1,0 +1,21 @@
+{
+  "name": "machine-message",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.16.3",
+    "express-authentication": "^0.3.2",
+    "jest": "^23.4.0",
+    "node-openssl-cert": "0.0.47",
+    "request-promise-lite": "^0.13.1",
+    "socket.io": "^2.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,2 +1,5 @@
-js/node_modules/
-js/package-lock.json
+client/node_modules/
+client/package-lock.json
+server/node_modules/
+server/package-lock.json
+raspi-scripts/

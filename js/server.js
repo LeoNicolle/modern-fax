@@ -3,18 +3,32 @@ const io = require('socket.io')();
 const users = [
 ];
 const allMessages = [];
+const path = "./data.json";
 
 function init(){
-    console.log("init");
-    fs.readFile("./data.json", (err, data) => {
-      users.push(...JSON.parse(data));
-      console.log(" read database: ", users);
+
+    function startServer(){
+      console.log("start server");
       io.listen(5000);
       setInterval(save, 10000);
+    }
+
+    fs.exists(path, (exists) => {
+      if(exists) {
+        fs.readFile(path, (err, data) => {
+          console.log("read database....");
+          users.push(...JSON.parse(data));
+          startServer();
+        });
+      }else{
+        console.log("no database found. Start from scratch");
+        startServer();
+      }
     });
+
 }
 function save(){
-    fs.writeFile("./data.json", JSON.stringify(users.map(({name, missedMessages}) => ({
+    fs.writeFile(path, JSON.stringify(users.map(({name, missedMessages}) => ({
       name, missedMessages
     }))), err => {if(err) throw err});
 }

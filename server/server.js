@@ -70,26 +70,20 @@ io.on('connection', function(socket){
     console.log(`user disconnect ${currentUser.name}`);
   });
 
-  socket.on('message', (message) => {
-    console.log(`received message ${message}`);
+  socket.on('message', (data) => {
+    console.log(`received message ${data}`);
     if(!currentUser) {
-      console.warn("no user on message", message);
+      console.warn("no user on message", data);
       return;
-
-    };
-    // add message to message: 
-    const data = {
-      
     }
-
     const otherUsers= users.filter(otherUser => currentUser !== otherUser);
     otherUsers.forEach(user => {
       if(!user.socket){
         console.log(`---miss ${user.name}`);
-        user.missedMessages.push(message);
+        user.missedMessages.push(data);
       }else{
         console.log(`---send ${user.name}`);
-        user.socket.emit("message", message);
+        user.socket.emit("message", data);
       }
     });
   });

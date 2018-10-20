@@ -1,5 +1,7 @@
 const wifi = require('node-wifi');
 const readline = require('readline');
+const printer = require('./printer');
+
 
 function init(){
   wifi.init({
@@ -22,6 +24,7 @@ function askForUser(question){
     output: process.stdout
   });
   return new Promise((resolve, reject) => {
+    printer.write(question, {spaced: true});
     rl.question(question, (answer) => {
       rl.close();
       resolve(answer);
@@ -37,14 +40,20 @@ function showConnections(){
   .then(networks => {
     networkNames = networks
     .filter(network => network.ssid.length)
-    .map((network) => network.ssid)
-    console.log(networkNames);
-    return askForUser("Enter the number of the network you want to connect\n\n")
+    .map((network) => network.ssid);
+
+    const text = networkNames
+      .slice(0,5)
+      .reduce((text, name, i) => `${text}${i}: ${name}\n`, "");
+    printer.write(text, {spaced: true});
+    return askForUser("Enter the number of the network you want to connect")
   })
   .then(number => {
     networkName = networkNames[number];
     if(!networkName){
-        throw new Error("Network Number not in range")
+        const text = "Network Number not in range";
+        printer.write(text, {spaced: true});
+        throw new Error(text)
         return showConnections();
     }
     return askForUser(`Try to connect to ${networkName}. Password ? `);
@@ -53,13 +62,19 @@ function showConnections(){
   .then(() => amIConnected())
   .then(connected => {
     if(connected){
-      console.log('Connected');
+      const text = 'Connected';
+      printer.write(text, {spaced: true});
+      console.log(text);
       return true;
     }
-    throw new Error("Not connected, wrong password ?");
+    const text = "Not connected, wrong password ?";
+    printer.write(text, {spaced: true});
+    throw new Error(text);
   })
   .catch(error => {
-      console.log("Error on connection");
+      const text = "Error on connection";
+      printer.write(text, {spaced: true});
+      console.log(text);
       return showConnections();
   });
 }

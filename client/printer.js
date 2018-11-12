@@ -25,11 +25,14 @@ function write(text, options){
 	const chunkLength= 10;
 	const nb = Math.ceil(text.length /chunkLength);
 
+	console.log("ici",  nb);
+
 	const chunks = new Array(nb)
-	.map((e, i) => text.substring(i * chunkLength, (i+1) * chunkLength))
-	.map((chunk,i) => {
-		new Promise((resolve, reject) => {
-       		console.log("timeout....");
+	.fill(1)
+	.map((e,i) => {
+		const chunk = text.slice(i * chunkLength, (i+1) * chunkLength)
+		return new Promise((resolve, reject) => {
+      console.log("timeout....");
 			setTimeout(() => resolve(), (i+1)*1000)
 		}).then(() =>{
 			_writeOrWait(chunk, options)
@@ -64,7 +67,6 @@ function writeMessage(data){
 	const dash = "\n ------------------------------\n";
 	const lines = "\n \n \n ";
 	const text = `${dash} ${date} ${dash} ${message} ${lines}`;
-
 	return write(text)
 	.catch(error => {
 		return new Promise((resolve, reject) => {

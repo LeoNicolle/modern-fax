@@ -14,28 +14,46 @@ function _tryToWrite(text){
 		        	console.log("write successfull");
 		        	resolve();
 		        }
-		    });			
+		    });
 		}catch(error){
 		    reject(error);
 		}
 	});
 }
 
-function write(text, {spaced = false} = {}){
+function write(text, options){
+	const chunkLength= 10;
+	const nb = Math.ceil(text.length /chunkLength);
 
-	const textToWrite = spaced 
+	const chunks = new Array(nb)
+	.map((e, i) => text.substring(i * chunkLength, (i+1) * chunkLength))
+	.map((chunk,i) => {
+		new Promise((resolve, reject) => {
+       		console.log("timeout....");
+			setTimeout(() => resolve(), (i+1)*1000)
+		}).then(() =>{
+			_writeOrWait(chunk, options)
+		})
+	})
+
+	return Promise.all(chunks);
+}
+
+function _writeOrWait(text, {spaced = false} = {}){
+
+	const textToWrite = spaced
 		? `${text} \n \n \n`
 		: text;
 
 	return _tryToWrite(textToWrite)
-	.then (()  => console.log("OK"+ text))	
+	.then (()  => console.log("OK"+ text))
 	.catch(error => {
 		return new Promise((resolve, reject) => {
        		console.log("timeout....");
 			setTimeout(() => resolve(), 1000)
-		}).then(() =>{ 
+		}).then(() =>{
        		console.log("Retry");
-			write(textToWrite)
+			_writeOrWait(textToWrite)
 		});
 	});
 }
@@ -47,14 +65,14 @@ function writeMessage(data){
 	const lines = "\n \n \n ";
 	const text = `${dash} ${date} ${dash} ${message} ${lines}`;
 
-	return _tryToWrite(text)
+	return write(text)
 	.catch(error => {
 		return new Promise((resolve, reject) => {
        		console.log("timeout....");
 			setTimeout(resolve(), 500)
-		}).then(() =>{ 
+		}).then(() =>{
        		console.log("Retry");
-			_tryToWrite(text)
+			write(text)
 		});
 	});
 
@@ -65,6 +83,4 @@ function writeMessage(data){
 module.exports = {
 	write,
 	writeMessage,
-
-
 };
